@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %} Последние обновления {% endblock %}
+{% load templates_extra %}
+{% load static %}
+{% block content %}
+{% csrf_token %}
+
+<link rel="stylesheet" href="{% static 'pages/myFollow.css' %}">
+<main class="main container">
+    <div class="main__header">
+        <h1 class="main__title">Мои подписки</h1>
+    </div>
+    {% for follower in subs.followers.all %}
+    <div class="card-list">
+        <div class="card-user" data-author="{{ follower.id }}">
+        <div class="card-user__header">
+            <h2 class="card-user__title">{{ follower.username }}</h2>
+        </div>
+        <div class="card-user__body">
+            <ul class="card-user__items">
+                {% for item in follower.author_recipes.all %}
+                <li class="card-user__item">
+                    <div class="recipe">
+                        <img src="{{ item.image.url }}" alt="какой-то-текст" class="recipe__image">
+                        <h3 class="recipe__title">{{ item.name }}</h3>
+                        <p class="recipe__text"><span class="icon-time"></span> {{ item.time }} мин.</p>
+                    </div>
+                </li>
+                {% endfor %}
+                <li class="card-user__item">
+                    <a href="#" class="card-user__link link">Еще 7 рецептов...</a>
+                </li>
+            </ul>
+        </div>
+             <div class="card-user__footer">
+            <button class="button button_style_light-blue button_size_auto" name="subscribe">Отписаться </button>
+                 </div>
+        </div>
+    </div>
+    {% endfor %}
+
+</main>
+
+<script src="{% static 'js/config/config.js' %}"></script>
+<script src="{% static 'js/components/MainCards.js' %}"></script>
+<script src="{% static 'js/components/MyFollow.js' %}"></script>
+<script src="{% static 'js/components/Subscribe.js' %}"></script>
+<script src="{% static 'js/components/Header.js' %}"></script>
+<script src="{% static 'js/api/Api.js' %}"></script>
+<script src="{% static 'myFollow.js' %}"></script>
+{% endblock %}
