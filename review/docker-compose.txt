@@ -1,0 +1,44 @@
+version: '2.2'
+
+# имя директории для хранения данных
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+
+# имена и описания контейнеров, которые должны быть развёрнуты
+services:
+  # описание контейнера db
+  db:
+    # образ, из которого должен быть запущен контейнер
+    image: postgres:12.4
+    # volume и связанная с ним директория в контейнере
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    # адрес файла, где хранятся переменные окружения
+    env_file:
+      - ./.env
+  web:
+    build: .
+    restart: always
+    command: gunicorn foodgram.wsgi:application --bind 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./static:/code/static
+      - ./media:/code/media
+    # "зависит от", 
+    depends_on:
+      - db
+    env_file:
+      - ./.env
+  nginx:
+    image: library/nginx:1.19.2
+    depends_on:
+      - web
+    ports:
+      - 80:80
+    volumes:
+      - ./config/nginx:/etc/nginx/conf.d
+      - ./static:/var/www/foodgram/static
+      - ./media:/var/www/foodgram/media 
