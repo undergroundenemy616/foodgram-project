@@ -136,7 +136,7 @@ class Purchases(View):
     def post(self, request):
         recipe_id = json.loads(request.body)['id']
         recipe = get_object_or_404(Recipe, id=recipe_id)
-        shop = ShoppingList.objects.get_or_create(author=request.user)
+        shop, created = ShoppingList.objects.get_or_create(author=request.user)
         shop.recipes.add(recipe)
         return JsonResponse({'success': True})
 
@@ -151,7 +151,7 @@ class Favorite(View):
     def post(self, request):
         recipe_id = json.loads(request.body)['id']
         recipe = get_object_or_404(Recipe, id=recipe_id)
-        fav_list = Favourite.objects.get_or_create(author=request.user)
+        fav_list, created = Favourite.objects.get_or_create(author=request.user)
         fav_list.recipes.add(recipe)
         return JsonResponse({'success': True})
 
@@ -166,7 +166,7 @@ class Subscribes(View):
     def post(self, request):
         subscribe_id = json.loads(request.body)['id']
         subscriber = get_object_or_404(User, id=subscribe_id)
-        subscribe = Subscribe.objects.get_or_create(author=request.user)
+        subscribe, created = Subscribe.objects.get_or_create(author=request.user)
         subscribe.followers.add(subscriber)
         return JsonResponse({'success': True})
 
