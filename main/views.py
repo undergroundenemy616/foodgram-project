@@ -82,7 +82,7 @@ class NewRecipe(View):
                 product = Product.objects.get_or_create(title=ingr[1][0],
                                                         dimension=ingr[1][2])
                 ingredient = Ingredient(recipe=new_recipe,
-                                        product=product,
+                                        product=Product.objects.get(title=ingr[1][0]),
                                         quanity=ingr[1][1])
                 ingredient.save()
             tags = ["breakfast", "lunch", "dinner"]
@@ -90,8 +90,6 @@ class NewRecipe(View):
                 if request.POST.get(tag[1]) is not None:
                     new_recipe.tag.add(Tag.objects.get(name=tag[1]))
             return redirect("recipe", username=request.user.username, recipe_id=new_recipe.id)
-        else:
-            print(form.errors)
         return render(request, "indexAuth.html")
 
 
@@ -105,18 +103,17 @@ def edit_recipe(request, username, recipe_id):
             if form.is_valid():
                 form.save()
                 ingredients = get_ingredients(request)
-                for i in range(len(ingredients)):
-                    if Product.objects.filter(title=ingredients[i][0]).count() == 0:
-                        Product.objects.create(title=ingredients[i][0],
-                                               dimension=ingredients[i][2])
+                for ingr in enumerate(ingredients):
+                    product = Product.objects.get_or_create(title=ingr[1][0],
+                                                            dimension=ingr[1][2])
                     ingredient = Ingredient(recipe=recipe,
-                                            product=Product.objects.get(title=ingredients[i][0]),
-                                            quanity=ingredients[i][1])
+                                            product=Product.objects.get(title=ingr[1][0]),
+                                            quanity=ingr[1][1])
                     ingredient.save()
                 tags = ["breakfast", "lunch", "dinner"]
-                for i in range(len(tags)):
-                    if request.POST.get(tags[i]) is not None:
-                        recipe.tag.add(Tag.objects.get(name=tags[i]))
+                for tag in enumerate(tags):
+                    if request.POST.get(tag[1]) is not None:
+                        recipe.tag.add(Tag.objects.get(name=tag[1]))
 
                 return redirect("recipe", username=username, recipe_id=recipe_id)
         return render(request, "formRecipe.html", {"form": form, "count": count})
@@ -139,18 +136,13 @@ class Purchases(View):
     def post(self, request):
         recipe_id = json.loads(request.body)['id']
         recipe = get_object_or_404(Recipe, id=recipe_id)
-        if ShoppingList.objects.filter(author=request.user).exists():
-            shop = ShoppingList.objects.get(author=request.user)
-            shop.recipes.add(recipe)
-        else:
-            shop = ShoppingList(author=request.user)
-            shop.recipes.add(recipe)
-            shop.save()
+        shop = ShoppingList.objects.get_or_create(author=request.user)
+        shop.recipes.add(recipe)
         return JsonResponse({'success': True})
 
     def delete(self, request, recipe_id):
         recipe = get_object_or_404(Recipe, pk=recipe_id)
-        shop = ShoppingList.objects.get(author=request.user)
+        shop = get_object_or_404(ShoppingList, author=request.user)
         shop.recipes.remove(recipe)
         return JsonResponse({'success': True})
 
@@ -159,18 +151,13 @@ class Favorite(View):
     def post(self, request):
         recipe_id = json.loads(request.body)['id']
         recipe = get_object_or_404(Recipe, id=recipe_id)
-        if Favourite.objects.filter(author=request.user).exists():
-            fav_list = Favourite.objects.get(author=request.user)
-            fav_list.recipes.add(recipe)
-        else:
-            fav_list = Favourite(author=request.user)
-            fav_list.recipes.add(recipe)
-            fav_list.save()
+        fav_list = Favourite.objects.get_or_create(author=request.user)
+        fav_list.recipes.add(recipe)
         return JsonResponse({'success': True})
 
     def delete(self, request, recipe_id):
         recipe = get_object_or_404(Recipe, pk=recipe_id)
-        fav_list = Favourite.objects.get(author=request.user)
+        fav_list = get_object_or_404(Favourite, author=request.user)
         fav_list.recipes.remove(recipe)
         return JsonResponse({'success': True})
 
@@ -179,18 +166,13 @@ class Subscribes(View):
     def post(self, request):
         subscribe_id = json.loads(request.body)['id']
         subscriber = get_object_or_404(User, id=subscribe_id)
-        if Subscribe.objects.filter(author=request.user).exists():
-            subscribe = Subscribe.objects.get(author=request.user)
-            subscribe.followers.add(subscriber)
-        else:
-            subscribe = Subscribe(author=request.user)
-            subscribe.save()
-            subscribe.followers.add(subscriber)
+        subscribe = Subscribe.objects.get_or_create(author=request.user)
+        subscribe.followers.add(subscriber)
         return JsonResponse({'success': True})
 
     def delete(self, request, subscribe_id):
         subscriber = get_object_or_404(User, pk=subscribe_id)
-        subscribe = Subscribe.objects.get(author=request.user)
+        subscribe = get_object_or_404(Subscribe, author=request.user)
         subscribe.followers.remove(subscriber)
         return JsonResponse({'success': True})
 
