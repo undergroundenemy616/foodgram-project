@@ -1,6 +1,7 @@
-from .models import ShoppingList
-from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
+
+from .models import ShoppingList
 
 User = get_user_model()
 
@@ -25,7 +26,7 @@ def generate_shop_list(request):
     for recipe in shop_list.recipes.all():
         for ingredient in recipe.recipe_ingridient.all():
             name = f'{ingredient.product.title} ({ingredient.product.dimension})'
-            if name in ingredients_dict.keys():
+            if name in ingredients_dict:
                 ingredients_dict[name] += ingredient.quanity
             else:
                 ingredients_dict[name] = ingredient.quanity
@@ -35,5 +36,3 @@ def generate_shop_list(request):
         ingredients_list.append(f'{key} - {value},')
 
     return ingredients_list
-
-

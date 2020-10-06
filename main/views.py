@@ -1,16 +1,19 @@
-from django.shortcuts import render, get_object_or_404, redirect
 import json
-from django.core.paginator import Paginator
-from .services import get_ingredients, generate_shop_list
-from django.http import JsonResponse, HttpResponse
-from django.views.generic import View
+
 from django.contrib.auth.decorators import login_required
-from .models import Tag, Product, Recipe, Ingredient, User, ShoppingList, Subscribe, Favourite
-from .forms import RecipeForm
-from rest_framework import viewsets
+from django.core.paginator import Paginator
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.generic import View
 from django_filters import rest_framework as filters
-from .serializers import IngridientSerializer
+from rest_framework import viewsets
+
 from .filters import ProductFilter
+from .forms import RecipeForm
+from .models import (Favourite, Ingredient, Product, Recipe, ShoppingList,
+                     Subscribe, Tag, User)
+from .serializers import IngridientSerializer
+from .services import generate_shop_list, get_ingredients
 
 
 class IngredientViewSet(viewsets.ModelViewSet):
@@ -32,7 +35,7 @@ class Ingredients(View):
 @login_required()
 def favourite_view(request):
     tags_values = request.GET.getlist('filters')
-    favorite = Favourite.objects.get(author=request.user)
+    favorite = get_object_or_404(Favourite, author=request.user)
     recipe_list = favorite.recipes.all()
 
     if tags_values:
@@ -47,7 +50,7 @@ def favourite_view(request):
     return render(request, "favorite.html", {"page": page, "paginator": paginator, "count": count})
 
 
-def indexAuth(request):
+def index_auth(request):
     tags = Tag.objects.all()
     tags_values = request.GET.getlist('filters')
     recipe_list = Recipe.objects.all()
@@ -75,18 +78,17 @@ class NewRecipe(View):
             new_recipe.author = request.user
             new_recipe.save()
             ingredients = get_ingredients(request)
-            for i in range(len(ingredients)):
-                if Product.objects.filter(title=ingredients[i][0]).count() == 0:
-                    Product.objects.create(title=ingredients[i][0],
-                                           dimension=ingredients[i][2])
+            for ingr in enumerate(ingredients):
+                product = Product.objects.get_or_create(title=ingr[1][0],
+                                                        dimension=ingr[1][2])
                 ingredient = Ingredient(recipe=new_recipe,
-                                        product=Product.objects.get(title=ingredients[i][0]),
-                                        quanity=ingredients[i][1])
+                                        product=product,
+                                        quanity=ingr[1][1])
                 ingredient.save()
             tags = ["breakfast", "lunch", "dinner"]
-            for i in range(len(tags)):
-                if request.POST.get(tags[i]) is not None:
-                    new_recipe.tag.add(Tag.objects.get(name=tags[i]))
+            for tag in enumerate(tags):
+                if request.POST.get(tag[1]) is not None:
+                    new_recipe.tag.add(Tag.objects.get(name=tag[1]))
             return redirect("recipe", username=request.user.username, recipe_id=new_recipe.id)
         else:
             print(form.errors)
@@ -123,13 +125,13 @@ def edit_recipe(request, username, recipe_id):
 
 @login_required()
 def shoplist(request):
-    shopping_list = ShoppingList.objects.get(author=request.user)
+    shopping_list = get_object_or_404(ShoppingList, author=request.user)
     return render(request, "shopList.html", {"shopping_list": shopping_list})
 
 
 @login_required()
 def follow_view(request):
-    followers = Subscribe.objects.get(author=request.user)
+    followers = get_object_or_404(Subscribes, author=request.user)
     return render(request, "myFollow.html", {"subs": followers})
 
 
