@@ -45,11 +45,8 @@ def favourite_view(request):
     paginator = Paginator(recipe_list, 9)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
-    if request.user.is_authenticated:
-        count = ShoppingList.objects.get(author=request.user).recipes.count()
     return render(request, "favorite.html", {"page": page,
-                                             "paginator": paginator,
-                                             "count": count})
+                                             "paginator": paginator,})
 
 
 def index_auth(request):
@@ -101,7 +98,6 @@ class NewRecipe(View):
 
 
 def edit_recipe(request, username, recipe_id):
-    count = ShoppingList.objects.get(author=request.user).recipes.count()
     if username != request.user.get_username():
         return render(request, "indexAuth.html")
 
@@ -111,8 +107,7 @@ def edit_recipe(request, username, recipe_id):
                       instance=recipe)
 
     if request.method != "POST":
-        return render(request, "formRecipe.html", {"form": form,
-                                                   "count": count})
+        return render(request, "formRecipe.html", {"form": form})
     recipe.recipe_ingridient.all().delete()
 
     if form.is_valid():
@@ -137,8 +132,7 @@ def edit_recipe(request, username, recipe_id):
                         username=username,
                         recipe_id=recipe_id)
 
-    return render(request, "formRecipe.html", {"form": form,
-                                               "count": count})
+    return render(request, "formRecipe.html", {"form": form})
 
 
 @login_required()
@@ -213,10 +207,3 @@ def download(request):
     response["Content-Disposition"] = "attachment; filename={0}".format(filename)
     return response
 
-
-def contacts(request):
-    return render(request, "contacts.html")
-
-
-def tech(request):
-    return render(request, "tech.html")

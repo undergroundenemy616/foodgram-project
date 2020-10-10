@@ -61,12 +61,4 @@ urlpatterns = [
     path("download/",
          views.download,
          name="download"),
-
-    path("contacts/",
-         views.contacts,
-         name="contacts"),
-
-    path("tech/",
-         views.tech,
-         name="tech")
 ]

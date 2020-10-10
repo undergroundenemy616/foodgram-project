@@ -91,7 +91,7 @@ DATABASES = {
         'HOST': os.environ.get('DB_HOST'),
         'PORT': os.environ.get('DB_PORT'),
     }
-} 
+}
 
 
 # Password validation
@@ -116,7 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
-SITE_ID = 1
+SITE_ID = 2
 
 LANGUAGE_CODE = 'en-us'
 

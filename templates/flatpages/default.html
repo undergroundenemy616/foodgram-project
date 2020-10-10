@@ -1,11 +1,12 @@
 {% extends "base.html" %}
-{% block title %} Рецепты {% endblock %}
+{% block title %} {{ flatpage.title }} {% endblock %}
 {% block content %}
-{% load static %}
-
-<div class="container">
-        <h1>{{ flatpage.title }}</h1>
-        {{ flatpage.content }}
+<main class="main container">
+<div style= min-height:60vh;>
+        <div class="container">
+                <h1>{{ flatpage.title }}</h1>
+                {{ flatpage.content }}
+        </div>
 </div>
-
-{% endblock %} 
+        </main>
+{% endblock %}

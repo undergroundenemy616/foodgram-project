@@ -39,7 +39,7 @@ class Recipe(models.Model):
     pub_date = models.DateTimeField("date published",
                                     auto_now_add=True,)
     name = models.TextField(verbose_name="Название рецепта")
-    image = models.ImageField(upload_to='main/',
+    image = models.ImageField(upload_to="main/",
                               verbose_name="Изображение продукта",
                               blank=True,
                               null=True,)
