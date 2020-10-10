@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %} Последние обновления {% endblock %}
+{% load static %}
+{% load templates_extra %}
+{% block content %}
+{% csrf_token %}
+<link rel="stylesheet" href="{% static 'pages/index.css' %}">
+<main class="main container">
+<div class="container">
+      <h1>Об авторе</h1>
+                <p> Автор - Трофимов Филипп, студент курса python-разработка.</p>
+<p> Больше моих работ можно найти в моем <a href=https://github.com/undergroundenemy616>Git-аккаунте</a>.</p>
+<p> Хотите поговорить со мной? Тогда жду вас в телеграм @desomorphine187. </p>
+</div>
+    </main>
+
+{% endblock %} 

@@ -12,8 +12,8 @@ class Tag(models.Model):
     color = models.TextField(verbose_name="Название тега")
 
     class Meta:
-        verbose_name = 'Тег'
-        verbose_name_plural = 'Теги'
+        verbose_name = "Тег"
+        verbose_name_plural = "Теги"
 
     def __str__(self):
         return self.name
@@ -24,8 +24,8 @@ class Product(models.Model):
     dimension = models.TextField(verbose_name="Единицы измерения")
 
     class Meta:
-        verbose_name = 'Продукт'
-        verbose_name_plural = 'Продукты'
+        verbose_name = "Продукт"
+        verbose_name_plural = "Продукты"
 
     def __str__(self):
         return self.title
@@ -34,7 +34,7 @@ class Product(models.Model):
 class Recipe(models.Model):
     author = models.ForeignKey(User,
                                on_delete=models.CASCADE,
-                               related_name="author_recipes",
+                               related_name="recipes",
                                verbose_name="Автор рецепта")
     pub_date = models.DateTimeField("date published",
                                     auto_now_add=True,)
@@ -49,57 +49,57 @@ class Recipe(models.Model):
     time = models.IntegerField(verbose_name="Время приготовления")
 
     class Meta:
-        verbose_name = 'Рецепт'
-        verbose_name_plural = 'Рецепты'
+        verbose_name = "Рецепт"
+        verbose_name_plural = "Рецепты"
         ordering = ('pub_date',)
 
 
 class Ingredient(models.Model):
     recipe = models.ForeignKey(Recipe,
                                on_delete=models.CASCADE,
-                               related_name="recipe_ingridient")
+                               related_name="ingredients")
     product = models.ForeignKey(Product,
                                 on_delete=models.CASCADE,
-                                related_name="product_ingridient")
+                                related_name="ingredients")
     quanity = models.IntegerField(verbose_name="Количество ингредиента")
 
     class Meta:
-        verbose_name = 'Ингредиент'
-        verbose_name_plural = 'Ингредиенты'
+        verbose_name = "Ингредиент"
+        verbose_name_plural = "Ингредиенты"
 
 
 class ShoppingList(models.Model):
     author = models.ForeignKey(User,
                                on_delete=models.CASCADE,
-                               related_name="author_shoplist")
+                               related_name="shoplist")
     recipes = models.ManyToManyField(Recipe,
-                                     related_name="recipes_shoplist",
+                                     related_name="shoplist",
                                      verbose_name="Количество ингредиента")
 
     class Meta:
-        verbose_name = 'Список покупок'
-        verbose_name_plural = 'Списки покупок'
+        verbose_name = "Список покупок"
+        verbose_name_plural = "Списки покупок"
 
 
 class Subscribe(models.Model):
     author = models.ForeignKey(User,
-                               on_delete=models.CASCADE,
-                               related_name="author_subscribe")
+                               on_delete=models.CASCADE,)
     followers = models.ManyToManyField(User,
-                                       related_name="followers_subscribe")
+                                       related_name="subscribes")
+
+    verbose_name = "Подписчики автора"
 
     class Meta:
-        verbose_name = 'Подписчики автора'
-        verbose_name_plural = 'Подписчики авторов'
+        verbose_name_plural = "Подписчики авторов"
 
 
 class Favourite(models.Model):
     author = models.ForeignKey(User,
                                on_delete=models.CASCADE,
-                               related_name="author_favourites")
+                               related_name="favourites")
     recipes = models.ManyToManyField(Recipe,
-                                     related_name="recipes_favourites")
+                                     related_name="favourites")
 
     class Meta:
-        verbose_name = 'Избранное автора'
-        verbose_name_plural = 'Избранное авторов'
+        verbose_name = "Избранное автора"
+        verbose_name_plural = "Избранное авторов"

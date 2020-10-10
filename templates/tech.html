@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %} Последние обновления {% endblock %}
+{% load static %}
+{% load templates_extra %}
+{% block content %}
+{% csrf_token %}
+<link rel="stylesheet" href="{% static 'pages/index.css' %}">
+<main class="main container">
+<div class="container">
+       <h1>Технологии</h1>
+                <p>При создании этого чудесного сайта использовались:</p>
+<p> -Django;</p>
+<p> -Django Rest Framework;</p>
+<p> -Gunicorn;</p>
+<p> -Nginx;</p>
+<p> -PostgreSQL;</p>
+<p> -Docker; </p>
+<p> -Кровь, пот и слезы. </p>
+</div>
+    </main>
+
+{% endblock %}
