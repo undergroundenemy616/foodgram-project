@@ -13,8 +13,8 @@ urlpatterns = [
 ]
 
 urlpatterns += [
-        path('about-us/', views.flatpage, {'url': '/contacts/'}, name='contacts'),
-        path('tech/', views.flatpage, {'url': '/tech/'}, name='tech'),
+        path("about-us/", views.flatpage, {"url": "/contacts/"}, name="contacts"),
+        path("tech/", views.flatpage, {"url": "/tech/"}, name="tech"),
 ]
 
 if settings.DEBUG:
