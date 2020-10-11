@@ -14,6 +14,7 @@ from .models import (Favourite, Ingredient, Product, Recipe, ShoppingList,
                      Subscribe, Tag, User)
 from .serializers import IngridientSerializer
 from .services import generate_shop_list, get_ingredients
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class IngredientViewSet(viewsets.ModelViewSet):
@@ -67,7 +68,7 @@ def index_auth(request):
                                               "all_tags": tags})
 
 
-class NewRecipe(View):
+class NewRecipe(LoginRequiredMixin, View):
     def get(self, request):
         form = RecipeForm()
         return render(request, "formRecipe.html", {"form": form})
@@ -98,6 +99,7 @@ class NewRecipe(View):
         return render(request, "indexAuth.html")
 
 
+@login_required()
 def edit_recipe(request, username, recipe_id):
     if username != request.user.get_username():
         return render(request, "indexAuth.html")
