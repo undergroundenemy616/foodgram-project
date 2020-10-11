@@ -82,7 +82,7 @@ class NewRecipe(View):
             for ingr in ingredients:
                 Product.objects.get_or_create(title=ingr[0],
                                               dimension=ingr[2])
-                product = Product.objects.get(title=ingr[0])
+                product = get_object_or_404(Product, title=ingr[0])
                 ingredient = Ingredient(recipe=new_recipe,
                                         product=product,
                                         quanity=ingr[1])
@@ -90,7 +90,8 @@ class NewRecipe(View):
             tags = ["breakfast", "lunch", "dinner"]
             for tag in tags:
                 if request.POST.get(tag) is not None:
-                    new_recipe.tag.add(Tag.objects.get(name=tag))
+                    current_tag = get_object_or_404(Tag, name=tag)
+                    new_recipe.tag.add(current_tag)
             return redirect("recipe",
                             username=request.user.username,
                             recipe_id=new_recipe.id)
@@ -117,7 +118,7 @@ def edit_recipe(request, username, recipe_id):
             Product.objects.get_or_create(title=ingr[0],
                                           dimension=ingr[2])
 
-            product = Product.objects.get(title=ingr[0])
+            product = get_object_or_404(Product, title=ingr[0])
             ingredient = Ingredient(recipe=recipe,
                                     product=product,
                                     quanity=ingr[1])
@@ -126,7 +127,8 @@ def edit_recipe(request, username, recipe_id):
         tags = ["breakfast", "lunch", "dinner"]
         for tag in tags:
             if request.POST.get(tag[1]) is not None:
-                recipe.tag.add(Tag.objects.get(name=tag))
+                current_tag = get_object_or_404(Tag, name=tag)
+                recipe.tag.add(current_tag)
 
         return redirect("recipe",
                         username=username,
@@ -206,4 +208,3 @@ def download(request):
     response = HttpResponse(result, content_type="text/plain")
     response["Content-Disposition"] = "attachment; filename={0}".format(filename)
     return response
-
