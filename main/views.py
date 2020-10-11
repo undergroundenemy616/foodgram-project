@@ -110,9 +110,10 @@ def edit_recipe(request, username, recipe_id):
                       instance=recipe)
 
     if request.method != "POST":
-        return render(request, "formRecipe.html", {"form": form})
-    recipe.recipe_ingridient.all().delete()
-
+        return render(request, "formChangeRecipe.html", {"form": form,
+                                                         "recipe_id": recipe_id,
+                                                         "username": username})
+    recipe.ingredients.all().delete()
     if form.is_valid():
         form.save()
         ingredients = get_ingredients(request)
@@ -136,7 +137,9 @@ def edit_recipe(request, username, recipe_id):
                         username=username,
                         recipe_id=recipe_id)
 
-    return render(request, "formRecipe.html", {"form": form})
+    return render(request, "formChangeRecipe.html", {"form": form,
+                                                     "recipe_id": recipe_id,
+                                                     "username": username})
 
 
 @login_required()
@@ -210,3 +213,22 @@ def download(request):
     response = HttpResponse(result, content_type="text/plain")
     response["Content-Disposition"] = "attachment; filename={0}".format(filename)
     return response
+
+
+@login_required
+def recipe_delete(request, recipe_id):
+    recipe = get_object_or_404(Recipe, id=recipe_id)
+    if request.user == recipe.author:
+        recipe.delete()
+    return redirect("index")
+
+
+def page_not_found(request, exception):
+    return render(request,
+                  "404.html",
+                  {"path": request.path},
+                  status=404)
+
+
+def server_error(request):
+    return render(request, "500.html", status=500)

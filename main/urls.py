@@ -61,4 +61,8 @@ urlpatterns = [
     path("download/",
          views.download,
          name="download"),
+
+    path("<int:recipe_id>/delete",
+         views.recipe_delete,
+         name="recipe_delete"),
 ]
